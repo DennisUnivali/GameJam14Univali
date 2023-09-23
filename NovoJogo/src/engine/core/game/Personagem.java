@@ -72,20 +72,20 @@ public class Personagem extends Sprite {
 		
 		
 		boolean colidiu = false;
-		if(X>mapa.worldW-charW) {
-			colidiu = true;
-		}
-		if(X<=0) {
-			colidiu = true;
-		}
-		if(Y>mapa.worldH-charH) {
-			colidiu = true;
-		}
-		if(Y<=0) {
-			colidiu = true;
-		}
+//		if(X>mapa.worldW-charW) {
+//			colidiu = true;
+//		}
+//		if(X<=0) {
+//			colidiu = true;
+//		}
+//		if(Y>mapa.worldH-charH) {
+//			colidiu = true;
+//		}
+//		if(Y<=0) {
+//			colidiu = true;
+//		}
 		
-		if(mapa.testColision(X+12, Y+24)) {
+		if(mapa.testColision(X+12, Y+32)) {
 			colidiu = true;
 		}
 		

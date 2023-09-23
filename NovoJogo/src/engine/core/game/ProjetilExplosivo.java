@@ -35,26 +35,26 @@ public class ProjetilExplosivo extends Projetil {
 					}
 			}
 			
-			if(X>mapa.worldW) {
-				//vivo = false;
-				explodindo = true;
-				return;
-			}
-			if(X<=0) {
-				//vivo = false;
-				explodindo = true;
-				return;
-			}
-			if(Y>mapa.worldH) {
-				//vivo = false;
-				explodindo = true;
-				return;
-			}
-			if(Y<=0) {
-				//vivo = false;
-				explodindo = true;
-				return;
-			}
+//			if(X>mapa.worldW) {
+//				//vivo = false;
+//				explodindo = true;
+//				return;
+//			}
+//			if(X<=0) {
+//				//vivo = false;
+//				explodindo = true;
+//				return;
+//			}
+//			if(Y>mapa.worldH) {
+//				//vivo = false;
+//				explodindo = true;
+//				return;
+//			}
+//			if(Y<=0) {
+//				//vivo = false;
+//				explodindo = true;
+//				return;
+//			}
 			
 			if(mapa.testColision(X, Y)) {
 				explodindo = false;

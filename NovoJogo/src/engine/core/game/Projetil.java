@@ -66,22 +66,22 @@ public class Projetil extends Sprite {
 				}
 		}
 		
-		if(X>mapa.worldW) {
-			vivo = false;
-			return;
-		}
-		if(X<=0) {
-			vivo = false;
-			return;
-		}
-		if(Y>mapa.worldH) {
-			vivo = false;
-			return;
-		}
-		if(Y<=0) {
-			vivo = false;
-			return;
-		}
+//		if(X>mapa.worldW) {
+//			vivo = false;
+//			return;
+//		}
+//		if(X<=0) {
+//			vivo = false;
+//			return;
+//		}
+//		if(Y>mapa.worldH) {
+//			vivo = false;
+//			return;
+//		}
+//		if(Y<=0) {
+//			vivo = false;
+//			return;
+//		}
 		
 		
 		if(mapa.testColision(X, Y)) {

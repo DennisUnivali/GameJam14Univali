@@ -15,6 +15,7 @@ import java.util.Random;
 
 import engine.base.entities.GameObject;
 import engine.base.entities.GameState;
+import engine.core.GamePanel;
 import engine.core.MyCanvas;
 
 public class GameRunCanvas extends MyCanvas implements GameState {
@@ -82,7 +83,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		tileset = Constantes.carregaImagem("owlishmedia_pixel_tiles.png");
 		
 		mapa = new TileMpaInfinito(tileset);
-		mapa.carregaMapaJson("./res/engine/core/mapa01_b.json");
+		//mapa.carregaMapaJson("./res/engine/core/mapa01_b.json");
 		
 		
 		MouseX = MouseY = 0;
@@ -507,7 +508,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		
 		
 		//Desenha Layer 3 do mapa
-		mapa.desenhaLayer(dbg, xTela, yTela, 2);
+		mapa.desenhaLayer(dbg, xTela, yTela, 2,33,33);
 		
 		
 		dbg.setTransform(trans);
@@ -516,7 +517,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		//Desenha Infos de Interface
 		dbg.setFont(font01);
 		dbg.setColor(Color.BLUE);
-		dbg.drawString("FPS: "+Constantes.FPS+" Tipo Tiro:"+tipoDeTiro+" ---> "+(int)(timerwave/1000), 20, 20);
+		dbg.drawString("FPS: "+GamePanel.FPS+" Tipo Tiro:"+tipoDeTiro+" ---> "+(int)(timerwave/1000), 20, 20);
 		//dbg.drawString("LEFT "+LEFT+" RIGHT "+RIGHT+" UP "+UP+" DOWN "+DOWN, 20, 50);	
 	}
 
