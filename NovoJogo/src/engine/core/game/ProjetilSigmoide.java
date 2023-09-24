@@ -1,5 +1,8 @@
 package engine.core.game;
 
+import engine.core.game.particulas.Particula;
+import engine.core.game.particulas.ParticulaImagem2;
+
 public class ProjetilSigmoide extends Projetil {
 
 	float v1x = 0; 

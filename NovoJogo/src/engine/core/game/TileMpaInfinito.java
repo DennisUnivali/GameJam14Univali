@@ -79,17 +79,20 @@ public class TileMpaInfinito extends TileMap{
 	public void desenhaLayer(Graphics2D dbg, int xTela,int yTela,int layer,int blx,int bly) {
 		
 		int adjx = xTela%32;
-		if(adjx<0) {
-			adjx = 32+adjx;
-		}
 		int adjy = yTela%32;
-		if(adjy<0) {
-			adjy = 32+adjy;
-		}
+
 		
 		int txbase = xTela/32;
 		int tybase = yTela/32;
-				
+		if(xTela<0) {
+			adjx = 32+adjx;
+			txbase = txbase-1;
+		}
+		if(yTela<0) {
+			adjy = 32+adjy;
+			tybase = tybase-1;
+		}
+		
 		for(int yt = 0;yt < blx;yt++) {
 			for(int xt = 0;xt < bly;xt++) {
 				int txw = txbase+xt;
@@ -126,7 +129,7 @@ public class TileMpaInfinito extends TileMap{
 				dbg.drawImage(tileset, (int)(xt*32)-adjx,(int)(yt*32)-adjy,(int)(xt*32)+32-adjx,(int)(yt*32)+32-adjy,tileX, tileY, tileX+32, tileY+32,null);
 			}
 		}
-		System.out.println(""+xTela+" - "+yTela);
+		//System.out.println(""+xTela+" - "+yTela+" "+adjx+" "+adjy);
 		
 	}
 
@@ -140,7 +143,7 @@ public class TileMpaInfinito extends TileMap{
 				tilemap[0][iy][ix] = 3;
 				tilemap[1][iy][ix] = -1;
 				tilemap[2][iy][ix] = -1;
-				System.out.println("Criou ");
+				//System.out.println("Criou ");
 			}
 		}
 		

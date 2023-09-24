@@ -1,10 +1,12 @@
-package engine.core.game;
+package engine.core.game.particulas;
 
 import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+
+import engine.core.game.TileMap;
 
 public class ParticulaImagem extends Particula {
 

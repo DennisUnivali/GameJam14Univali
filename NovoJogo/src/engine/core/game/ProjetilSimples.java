@@ -1,6 +1,11 @@
 package engine.core.game;
 
+import engine.core.game.particulas.Particula;
+
 public class ProjetilSimples extends Projetil {
+	
+	int timervida = 0;
+	int tmaxvida = 5000;
 
 	public ProjetilSimples(TileMap mapa, float x, float y, float angulo, float velocidade, Personagem pai, float dano) {
 		super(mapa, x, y, angulo, velocidade, pai, dano);
@@ -12,6 +17,8 @@ public class ProjetilSimples extends Projetil {
 		// TODO Auto-generated method stub
 		X = X + velX*DiffTime/1000.0f;
 		Y = Y + velY*DiffTime/1000.0f;
+		
+		timervida+=DiffTime;
 		
 		for(int i = 0; i < GameRunCanvas.listaDePersonagem.size();i++) {
 			Personagem p2 = GameRunCanvas.listaDePersonagem.get(i);
@@ -49,7 +56,12 @@ public class ProjetilSimples extends Projetil {
 //			return;
 //		}
 		
+
+		
 		if(mapa.testColision(X, Y)) {
+			vivo = false;
+		}
+		if(timervida>=tmaxvida) {
 			vivo = false;
 		}
 	}

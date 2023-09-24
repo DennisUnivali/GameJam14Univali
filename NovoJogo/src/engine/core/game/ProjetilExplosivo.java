@@ -3,6 +3,8 @@ package engine.core.game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import engine.core.game.particulas.ParticulaImagem2;
+
 public class ProjetilExplosivo extends Projetil {
 
 	boolean explodindo = false;

@@ -1,9 +1,12 @@
-package engine.core.game;
+package engine.core.game.particulas;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
+
+import engine.core.game.Sprite;
+import engine.core.game.TileMap;
 
 public class Particula extends Sprite {
 	float velX = 0;
@@ -64,44 +67,6 @@ public class Particula extends Sprite {
 			vivo = false;
 		}
 		
-		/*
-		if(X>mapa.worldW) {
-			vivo = false;
-			return;
-		}
-		if(X<=0) {
-			vivo = false;
-			return;
-		}
-		if(Y>mapa.worldH) {
-			vivo = false;
-			return;
-		}
-		if(Y<=0) {
-			vivo = false;
-			return;
-		}
-		
-		int bx = (int)((X)/mapa.tilewidth); 
-		int by = (int)((Y)/mapa.tileheight);
-		
-		if(bx < mapa.width && by < mapa.height && mapa.tilemap[1][by][bx]!=-1) {
-			vivo = false;
-		}*/
 	}
 	
-	/*public boolean colide(Personagem p) {
-		float dx = (p.X+p.charW/2)-X;
-		float dy = (p.Y+p.charH/2)-Y;
-		
-		float d = dx*dx+dy*dy;
-		float sraio = p.raio+1;//raio do personagem mais raio do  tiro
-		
-		if(sraio*sraio>d) {
-			return true;
-		}else {
-			return false;
-		}
-	}*/
-
 }

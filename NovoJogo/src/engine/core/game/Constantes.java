@@ -1,5 +1,6 @@
 package engine.core.game;
 
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +20,20 @@ public class Constantes {
 	public static int fpscount;
 	
 	public static GameRunCanvas gameruncanvas = null;
+	
+	public static Personagem heroi;
+	public static Font font10 = new Font("",Font.BOLD,10);
+	
+	public static BufferedImage slashImages[] = new BufferedImage[3];
+	public static BufferedImage dashImage;
+	
+	static {
+		slashImages[0] = carregaImagem("slash00.png");
+		slashImages[1] = carregaImagem("slash01.png");
+		slashImages[2] = carregaImagem("slash02.png");
+		
+		dashImage = carregaImagem("dash00.png");
+	}
 	
 	public static BufferedImage carregaImagem(String imageName) {
 		

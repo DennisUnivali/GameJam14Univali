@@ -10,6 +10,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 
@@ -17,6 +19,7 @@ import engine.base.entities.GameObject;
 import engine.base.entities.GameState;
 import engine.core.GamePanel;
 import engine.core.MyCanvas;
+import engine.core.game.particulas.Particula;
 
 public class GameRunCanvas extends MyCanvas implements GameState {
 
@@ -32,7 +35,8 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 
 
 	boolean LEFT, RIGHT,UP,DOWN;
-	boolean FIRE;
+	boolean FIRE,DASH;
+	int dashtimer = 2000;
 
 
 	int MouseX,MouseY;
@@ -66,7 +70,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 
 	public static ArrayList<Personagem> listaDePersonagem;
 	public static ArrayList<Projetil> listaProjeteis;
-	public static ArrayList<Particula> listaParticulas;
+	public static LinkedList<Particula> listaParticulas;
 	public static ArrayList<ItemMapa> listaItemMapa;
 
 	public static double zoom = 1.0;
@@ -90,8 +94,12 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		
 		listaDePersonagem = new ArrayList<>();
 		
-		heroi = new Personagem(200, 200, mapa, chara1);
+		Constantes.heroi = new Personagem(200, 200, mapa, chara1);
+		this.heroi = Constantes.heroi;
 		listaDePersonagem.add(heroi);
+		heroi.vida = 500;
+		heroi.vidaMaxima = 500;
+		heroi.damage = 50;
 		
 		/*for(int i = 0; i < 500;i++) {
 			Personagem p = null;
@@ -121,7 +129,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		}*/
 		
 		listaProjeteis = new ArrayList<>();
-		listaParticulas = new ArrayList<>();
+		listaParticulas = new LinkedList<>();
 		listaItemMapa = new ArrayList<>();
 		
 		fumaca = Constantes.carregaImagem("fumaca.png");
@@ -209,7 +217,10 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 			DOWN = true;
 		}	
 		if(keyCode == KeyEvent.VK_SPACE) {
-			FIRE = true;
+			if(dashtimer>5000) {
+				DASH = true;
+				dashtimer = 0;
+			}
 		}
 		if(keyCode == KeyEvent.VK_0) {
 			antialias_on = !antialias_on;
@@ -245,28 +256,13 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 			DOWN = false;
 		}
 		if(keyCode == KeyEvent.VK_SPACE) {
-			FIRE = false;
+			DASH = false;
 		}
 	}
 
 
 
-	int tempoEntreWaves = 5000;
-	int wave = 0;
-	int timerwave = 0;
-	
-	int wavetype[][] = {
-			{10,100,100},//0
-			{20,100,120},//1
-			{20,200,120},//2
-			{20,200,130},//3
-			{20,200,130},//4
-			{30,300,130},//5
-			{40,300,140},//6
-			{50,300,145},//7
-			{100,400,150},//8
-			{100,400,150}//9
-	};
+
 
 	
 	private void addTiro1() {
@@ -319,6 +315,24 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		return null;
 	}
 
+	
+	
+	int tempoEntreWaves = 5000;
+	int wave = 0;
+	int timerwave = 0;
+	
+	int wavetype[][] = {
+			{10,100,100},//0
+			{20,100,120},//1
+			{20,200,120},//2
+			{20,200,130},//3
+			{20,200,130},//4
+			{30,300,130},//5
+			{40,300,140},//6
+			{50,300,145},//7
+			{100,400,150},//8
+			{100,400,150}//9
+	};
 	@Override
 	public void update(float diffTime) {
 		int DiffTime = (int)diffTime;
@@ -328,18 +342,16 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 			animationTimer+=DiffTime;
 		}
 
+		dashtimer+=DiffTime;
 		
-		
-//		int tempoEntreFrames = 100;
-//		collFrame = (animationTimer/tempoEntreFrames)%3;
-	//	
-//		//sqX1+=0.5f;
-//		float velocidade = 200;
-	//	
-//		float oldsqX1 = sqX1;
-//		float oldsqY1 = sqY1;
-	//	
+			
 		float velocidade = 200;
+		if(dashtimer<300) {
+			velocidade = 1000;
+			heroi.dash = true;
+		}else {
+			heroi.dash = false;
+		}
 		if(RIGHT) {
 			heroi.velX = velocidade;
 		}else if(LEFT) {
@@ -359,19 +371,6 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		
 		xTela = (int)(heroi.X+12-Constantes.PWIDTHZ/2);
 		yTela = (int)(heroi.Y+24-Constantes.PHEIGHTZ/2);
-		
-//		if(xTela<0) {
-//			xTela = 0;
-//		}
-//		if(yTela<0) {
-//			yTela = 0;
-//		}
-//		if(xTela+PWIDTHZ>mapa.worldW) {
-//			xTela =(int)(mapa.worldW-PWIDTHZ);
-//		}
-//		if(yTela+PHEIGHTZ>mapa.worldH) {
-//			yTela =(int)(mapa.worldH-PHEIGHTZ);
-//		}
 		
 		
 		for(int i = 0; i < listaDePersonagem.size();i++) {
@@ -410,26 +409,39 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 			}
 		}
 		
-		for(int i = 0; i < listaParticulas.size();i++) {
-			Particula p = listaParticulas.get(i);
-			if(p.vivo==false) {
-				listaParticulas.remove(i);
-				i--;
+		for (Iterator iterator = listaParticulas.iterator(); iterator.hasNext();) {
+			Particula particula = (Particula) iterator.next();
+			if(particula.vivo==false) {
+				iterator.remove();
 			}else {
-				p.atualizeSe(DiffTime);
+				particula.atualizeSe(DiffTime);
 			}
 		}
+		
 		
 		timerwave+=(int)DiffTime;
 		if(timerwave>=tempoEntreWaves) {
 			int wavedata[] = wavetype[wave]; 
+			
 			for(int i = 0; i < wavedata[0];i++) {
-				Personagem p = null;
+				Inimigo p = null;
 				
 				boolean colidiu = false;
 				
+				int baseX = (int)heroi.X;
+				int baseY = (int)heroi.Y;
+				
+				int xmul = rnd.nextInt(3)-1;
+				int ymul = rnd.nextInt(3)-1;
+				if(xmul==0&&ymul==0) {
+					xmul=1;
+				}
+				
+				baseX+=1000*xmul; 
+				baseY+=1000*ymul; 
+				
 				do {
-					p = new Personagem(rnd.nextInt(200), rnd.nextInt(3000), mapa, charsetpersonagens);	
+					p = new Inimigo(baseX+rnd.nextInt(500),baseY+rnd.nextInt(500), mapa, charsetpersonagens);	
 					colidiu = false;
 					for(int j = 0; j < listaDePersonagem.size();j++) {
 						Personagem p2 = listaDePersonagem.get(j);
@@ -448,6 +460,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 			    p.charaY = rnd.nextInt(2)*128; 
 			    
 			    p.vida = wavedata[1];
+			    p.vidaMaxima = wavedata[1];
 				
 				listaDePersonagem.add(p);
 			}
@@ -460,6 +473,8 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 	
 	}
 
+	Color corLife = new Color(0.0f, 0.5f, 0.0f, 0.5f);
+	Color corDash = new Color(0.0f, 0.0f, 0.5f, 0.5f);
 	@Override
 	public void render(Graphics2D dbg) {
 		//Pinta O fundo de Branco
@@ -500,11 +515,10 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 			listaProjeteis.get(i).desenhaSe(dbg, xTela, yTela);
 		}
 		// Desenha Particulas
-		for(int i = 0; i < listaParticulas.size();i++) {
-			listaParticulas.get(i).desenhaSe(dbg, xTela, yTela);
+		for (Iterator iterator = listaParticulas.iterator(); iterator.hasNext();) {
+			Particula particula = (Particula) iterator.next();
+			particula.desenhaSe(dbg, xTela, yTela);
 		}
-
-		
 		
 		
 		//Desenha Layer 3 do mapa
@@ -513,6 +527,25 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		
 		dbg.setTransform(trans);
 		
+		
+		int szbarh = Constantes.PHEIGHT-60;
+		int fillbar = (int)((heroi.vida/(float)heroi.vidaMaxima)*szbarh);
+		dbg.setColor(corLife);
+		dbg.fillRect(5, 30+(szbarh-fillbar), 20, fillbar);
+		dbg.setColor(Color.black);
+		dbg.drawRect(5, 30, 20, szbarh);
+		
+		int dashbarsz = 200;
+		int dashpart = 0;
+		if(dashtimer<5000) {
+			dashpart = (int)((dashtimer/(float)5000)*dashbarsz);
+		}else {
+			dashpart = 200;
+		}
+		dbg.setColor(corDash);
+		dbg.fillRect(30, Constantes.PHEIGHT-230+(dashbarsz-dashpart), 20, dashpart);
+		dbg.setColor(Color.black);
+		dbg.drawRect(30, Constantes.PHEIGHT-230, 20, dashbarsz);
 		
 		//Desenha Infos de Interface
 		dbg.setFont(font01);

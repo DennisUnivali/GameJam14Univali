@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 
+import engine.core.game.GameRunCanvas;
 import old.CanvasMAIN;
 import old.Constantes;
 
@@ -19,8 +20,8 @@ public class CanvasSplash extends MyCanvas{
 		timer+=diftime;
 		
 		if(timer > 8000) {
-			//GamePanel.telaAtiva = new CanvasMAIN();
-			GamePanel.telaAtiva = new CanvasMainMenu();
+			GamePanel.telaAtiva = new GameRunCanvas();
+			//GamePanel.telaAtiva = new CanvasMainMenu();
 		}
 	}
 

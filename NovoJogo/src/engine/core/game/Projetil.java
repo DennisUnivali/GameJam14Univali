@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 
+import engine.core.game.particulas.Particula;
+
 public class Projetil extends Sprite {
 	float velX = 0;
 	float velY = 0;
