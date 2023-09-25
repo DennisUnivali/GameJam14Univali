@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 public class Inimigo extends Personagem {
 
 	int iaTimer = 0;
+	int nextIa = 150;
 	
 	public Inimigo(int x, int y, TileMap mapa, BufferedImage charset) {
 		super(x, y, mapa, charset);
@@ -14,7 +15,9 @@ public class Inimigo extends Personagem {
 	public void atualizeSe(long DiffTime) {
 		iaTimer += DiffTime;
 		
-		if(iaTimer>250) {
+		if(iaTimer>nextIa) {
+			nextIa = 150;
+			iaTimer = 0;
 			Personagem p2 = colidePersonagemRP(25);
 			//Personagem p2 = null;
 			
@@ -26,14 +29,20 @@ public class Inimigo extends Personagem {
 				
 				velX = (float)(vel*Math.cos(ang));
 				velY = (float)(vel*Math.sin(ang));
+				nextIa = 20;
 			}else {
 				int xdf = (int)(Constantes.heroi.X-X);
 				int ydf = (int)(Constantes.heroi.Y-Y);
 				
+				double dist = xdf*xdf+ydf*ydf;
 				double ang = Math.atan2(ydf, xdf);
-				
+				if(dist<36) {
+					ang+=Math.PI;
+				}
+					
 				velX = (float)(vel*Math.cos(ang));
 				velY = (float)(vel*Math.sin(ang));
+				
 			}
 		}
 		

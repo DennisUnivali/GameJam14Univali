@@ -21,20 +21,20 @@ public class Personagem extends Sprite {
 	int animationTimer = 0;
 	int tempoEntreFrames = 100;
 	
-	int charW = 24;
-	int charH = 32;
+	public int charW = 24;
+	public int charH = 32;
 	
 	//72x128
 	int charaX = 0;
 	int charaY = 0;
 	
-	int raio = 12;
+	public int raio = 12;
 	
 	float vida = 10;
 	float vidaMaxima = 10;
 	
 	
-	float damage = 10;
+	public float damage = 10;
 	int timerDamage = 0;
 	
 	boolean invulneravel = false;
@@ -44,6 +44,8 @@ public class Personagem extends Sprite {
 	//Heroi
 	int attacktime = 0;
 	int xp = 0;
+	int level = 1;
+	int xpLevelUp = 10;
 	
 	public Personagem(int x,int y,TileMap mapa,BufferedImage charset) {
 		this.mapa = mapa;
@@ -67,13 +69,13 @@ public class Personagem extends Sprite {
 //		dbg.drawOval((int)X-xTela+charW/2-raio,(int)Y-yTela+charH/2-raio,2*raio,2*raio);
 		
 		
-		dbg.setColor(Color.red);
-		dbg.fillRect((int)X-xTela,(int)Y-yTela-10, 25, 5);
-		
-		int barlife = (int)((vida/(float)vidaMaxima)*25);
-		
-		dbg.setColor(Color.green);
-		dbg.fillRect((int)X-xTela+25-barlife,(int)Y-yTela-10, barlife, 5);
+//		dbg.setColor(Color.red);
+//		dbg.fillRect((int)X-xTela,(int)Y-yTela-10, 25, 5);
+//		
+//		int barlife = (int)((vida/(float)vidaMaxima)*25);
+//		
+//		dbg.setColor(Color.green);
+//		dbg.fillRect((int)X-xTela+25-barlife,(int)Y-yTela-10, barlife, 5);
 		
 		if(attacktime<200) {
 			double ang = 0;
@@ -143,7 +145,7 @@ public class Personagem extends Sprite {
 		timerDamage+=DiffTime;
 		attacktime+=DiffTime;
 		invulneravelTimer+=DiffTime;
-		if(invulneravelTimer<100) {
+		if(invulneravelTimer<50) {
 			invulneravel = true;
 		}else {
 			invulneravel = false;
@@ -182,7 +184,8 @@ public class Personagem extends Sprite {
 				ItemMapa item = GameRunCanvas.listaItemMapa.get(i);
 				if(item.colideRet(this)) {
 					//vida+=100;
-					xp++;
+					//xp++;
+					item.heroiPegaItem(this);
 					GameRunCanvas.listaItemMapa.remove(i);
 					break;
 				}
@@ -203,25 +206,25 @@ public class Personagem extends Sprite {
 					if(p2!=this) {
 						if(linhaAnim==0) {
 							if(colideRet(p2,X-16,Y+12-64,+X-16+32,Y+12)) {
-								p2.levaDano(damage);
+								p2.levaDano(damage+Constantes.rnd.nextInt((int)(damage/2)));
 								p2.Y-=8;
 							}
 						}
 						if(linhaAnim==1) {
-							if(colideRet(p2,X+24,Y-16,+X+24+64,+Y-16+32)) {
-								p2.levaDano(damage);
+							if(colideRet(p2,X+20,Y-16,+X+24+68,+Y-16+32)) {
+								p2.levaDano(damage+Constantes.rnd.nextInt((int)(damage/2)));
 								p2.X+=8;
 							}
 						}
 						if(linhaAnim==2) {
 							if(colideRet(p2,X+16,Y+24,+X+16+32,+Y+24+64)) {
-								p2.levaDano(damage);
+								p2.levaDano(damage+Constantes.rnd.nextInt((int)(damage/2)));
 								p2.Y+=8;
 							}
 						}
 						if(linhaAnim==3) {
-							if(colideRet(p2,X-64,Y+16,X,+Y+16+32)) {
-								p2.levaDano(damage);
+							if(colideRet(p2,X-64,Y+16,X+4,+Y+16+32)) {
+								p2.levaDano(damage+Constantes.rnd.nextInt((int)(damage/2)));
 								p2.X-=8;
 							}
 						}
@@ -229,7 +232,7 @@ public class Personagem extends Sprite {
 				}
 			}
 		}else {
-			if(timerDamage>1000&&colideRet(Constantes.heroi)) {
+			if(timerDamage>300&&colideRet(Constantes.heroi)) {
 				timerDamage = 0;
 				Constantes.heroi.levaDano(damage);
 			}
@@ -284,7 +287,7 @@ public class Personagem extends Sprite {
 		vida-=dano;
 		invulneravelTimer = 0;
 		
-		ParticulaTexto pt = new ParticulaTexto(mapa, X, Y,(float)-(Math.PI/2), 50, 400, "-"+dano);
+		ParticulaTexto pt = new ParticulaTexto(mapa, X, Y,(float)-(Math.PI/2), 75, 600, "-"+(int)dano);
 		
 		synchronized (GameRunCanvas.listaParticulas) {
 			GameRunCanvas.listaParticulas.add((Particula)pt);
@@ -293,10 +296,13 @@ public class Personagem extends Sprite {
 		
 		if(vida<=0) {
 			vivo = false;
-			ItemMapa item = new ItemMapa();
-			item.X = X;
-			item.Y = Y;
-			GameRunCanvas.listaItemMapa.add(item);
+			if(Constantes.rnd.nextInt(100)<10) {
+				ItemMapa item = new ItemMapa(2,(int)X,(int)Y);
+				GameRunCanvas.listaItemMapa.add(item);
+			}else {
+				ItemMapa item = new ItemMapa(0,(int)X,(int)Y);
+				GameRunCanvas.listaItemMapa.add(item);
+			}
 		}
 	}
 	

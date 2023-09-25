@@ -17,9 +17,15 @@ import java.util.Random;
 
 import engine.base.entities.GameObject;
 import engine.base.entities.GameState;
+import engine.core.CanvasSplash;
 import engine.core.GamePanel;
 import engine.core.MyCanvas;
 import engine.core.game.particulas.Particula;
+import engine.core.game.projetil.Projetil;
+import engine.core.game.projetil.ProjetilExplosivo;
+import engine.core.game.projetil.ProjetilSigmoide;
+import engine.core.game.projetil.ProjetilSimples;
+import engine.core.game.projetil.SucubusOrb;
 
 public class GameRunCanvas extends MyCanvas implements GameState {
 
@@ -36,7 +42,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 
 	boolean LEFT, RIGHT,UP,DOWN;
 	boolean FIRE,DASH;
-	int dashtimer = 2000;
+	int dashtimer = 3000;
 
 
 	int MouseX,MouseY;
@@ -46,6 +52,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 	//float sqY1 = 100;
 
 	Personagem heroi;
+	int velocidadeBase = 200;
 
 	//float sqX2 = 0;
 	//float sqY2 = 200;
@@ -78,11 +85,20 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 
 	int tipoDeTiro = 1;
 	
+	int gameCicleTrimer = 0;
+	
+	int gameEndX = 20000;
+	public static int sucubusPower = 0;
+	SucubusOrb oneorb = null;
+	SucubusOrb oneorb1 = null;
+	SucubusOrb oneorb2 = null;
+	
 	public GameRunCanvas() {
-		chara1 = Constantes.carregaImagem("Chara1.png");
+		Constantes.gameruncanvas = this;
+		chara1 = Constantes.carregaImagem("heroiChara.png");
 		System.out.println("chara1 -> "+chara1.getColorModel());
 		
-		charsetpersonagens = Constantes.carregaImagem("chara1c.png");
+		charsetpersonagens = Constantes.carregaImagem("chara2.png");
 
 		tileset = Constantes.carregaImagem("owlishmedia_pixel_tiles.png");
 		
@@ -97,36 +113,17 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		Constantes.heroi = new Personagem(200, 200, mapa, chara1);
 		this.heroi = Constantes.heroi;
 		listaDePersonagem.add(heroi);
-		heroi.vida = 500;
+		//TODO
+		heroi.vida = 5;
 		heroi.vidaMaxima = 500;
 		heroi.damage = 50;
+		velocidadeBase = 200;//1600;
 		
-		/*for(int i = 0; i < 500;i++) {
-			Personagem p = null;
-			
-			boolean colidiu = false;
-			
-			do {
-				p = new Personagem(rnd.nextInt(3000), rnd.nextInt(3000), mapa, charsetpersonagens);	
-				colidiu = false;
-				for(int j = 0; j < listaDePersonagem.size();j++) {
-					Personagem p2 = listaDePersonagem.get(j);
-					if(p2.colideRet(p)) {
-						colidiu = true;
-						break;
-					}
-				}
-			}while(colidiu);
-			
-			
-			p.velX = rnd.nextInt(400)-200; 
-		    p.velY = rnd.nextInt(400)-200; 
-		    
-			p.charaX = rnd.nextInt(4)*72; 
-		    p.charaY = rnd.nextInt(2)*128; 
-			
-			listaDePersonagem.add(p);
-		}*/
+		//TODO
+		zoom = 1.5f;
+		Constantes.PWIDTHZ = Constantes.PWIDTH/zoom;
+		Constantes.PHEIGHTZ = Constantes.PHEIGHT/zoom;
+		
 		
 		listaProjeteis = new ArrayList<>();
 		listaParticulas = new LinkedList<>();
@@ -134,11 +131,23 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		
 		fumaca = Constantes.carregaImagem("fumaca.png");
 		fumaca2 = Constantes.carregaImagem("fumaca2.png");
+		
+		
+		//Adiciona Altar da Ganancia
+		ItemMapa item = new ItemMapa(1,800,212);
+		listaItemMapa.add(item);
+	}
+	
+	public void resetMovingKeys() {
+		LEFT = false;
+		RIGHT = false;
+		UP = false;
+		DOWN = false;
 	}
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		if(e.getWheelRotation()<0) {
+		/*if(e.getWheelRotation()<0) {
 			zoom = zoom*1.1;
 			if(zoom>=8) {
 				zoom = 8;
@@ -153,7 +162,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 			}
 			Constantes.PWIDTHZ = Constantes.PWIDTH/zoom;
 			Constantes.PHEIGHTZ = Constantes.PHEIGHT/zoom;
-		}
+		}*/
 	}
 
 	@Override
@@ -170,8 +179,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -190,13 +198,11 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -217,7 +223,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 			DOWN = true;
 		}	
 		if(keyCode == KeyEvent.VK_SPACE) {
-			if(dashtimer>5000) {
+			if(dashtimer>3000) {
 				DASH = true;
 				dashtimer = 0;
 			}
@@ -311,32 +317,51 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	
 	
-	int tempoEntreWaves = 5000;
+	int tempoEntreWaves = 7000;
 	int wave = 0;
-	int timerwave = 0;
+	int timerwave = 5000;
+
+	float enemydamagemull = 1;
+	float enemylifeemull = 1;
 	
 	int wavetype[][] = {
-			{10,100,100},//0
-			{20,100,120},//1
+			{20,100,100},//0
+			{10,100,150},//1
 			{20,200,120},//2
 			{20,200,130},//3
-			{20,200,130},//4
+			{20,200,200},//4
 			{30,300,130},//5
 			{40,300,140},//6
-			{50,300,145},//7
-			{100,400,150},//8
-			{100,400,150}//9
+			{10,300,230},//7
+			{50,400,210},//8
+			{50,400,210}//9
 	};
 	@Override
 	public void update(float diffTime) {
 		int DiffTime = (int)diffTime;
 		//System.out.println(""+diffTime+" "+DiffTime);
+		gameCicleTrimer += DiffTime;
+		if(gameCicleTrimer>20000) {
+			gameCicleTrimer = 0;
+			
+			ItemMapa item = new ItemMapa(1,(int)(heroi.X+800+rnd.nextInt(500)),(int)heroi.Y-300+rnd.nextInt(600));
+			listaItemMapa.add(item);
+			
+			enemydamagemull+=enemydamagemull*0.15;
+			enemylifeemull+=enemylifeemull*0.25;
+		}
+		int progresso = (int)((heroi.X/gameEndX)*100);
+		if(heroi.X>=gameEndX) {
+			CanvasFimDeJogo fimDeJogo = new CanvasFimDeJogo();
+			GamePanel.telaAtiva = fimDeJogo;
+			return;
+		}
 		
 		if(RIGHT||LEFT||DOWN||UP) {
 			animationTimer+=DiffTime;
@@ -345,11 +370,12 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		dashtimer+=DiffTime;
 		
 			
-		float velocidade = 200;
+		int velocidade = velocidadeBase;
 		if(dashtimer<300) {
 			velocidade = 1000;
 			heroi.dash = true;
 		}else {
+			velocidade = velocidadeBase;
 			heroi.dash = false;
 		}
 		if(RIGHT) {
@@ -376,8 +402,14 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		for(int i = 0; i < listaDePersonagem.size();i++) {
 			Personagem p = listaDePersonagem.get(i);
 			if(p.vivo==false) {
-				listaDePersonagem.remove(i);
-				i--;
+				if(p==heroi) {
+					OverlayCanvasSukubus ovcanvas = new OverlayCanvasSukubus(this);
+					p.vivo = true;
+					GamePanel.telaAtiva = ovcanvas;
+				}else {
+					listaDePersonagem.remove(i);
+					i--;
+				}
 			}else {
 				p.atualizeSe(DiffTime);
 			}
@@ -386,17 +418,30 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		fireTimer+=DiffTime;
 		
 		
-		if(FIRE&&fireTimer>=fireInterval) {
-			//TODO
-			if(tipoDeTiro==1) {
-				addTiro1();
-			}else if(tipoDeTiro==2) {
-				addTiro2();
-			}else if(tipoDeTiro==3) {
-				addTiro3();
-			}
-			
-			fireTimer = 0;
+//		if(FIRE&&fireTimer>=fireInterval) {
+//			//TODO
+//			if(tipoDeTiro==1) {
+//				addTiro1();
+//			}else if(tipoDeTiro==2) {
+//				addTiro2();
+//			}else if(tipoDeTiro==3) {
+//				addTiro3();
+//			}
+//			
+//			fireTimer = 0;
+//		}
+		
+		if(oneorb==null&&sucubusPower>0) {
+			oneorb = new SucubusOrb(mapa,heroi,50,150);
+			listaProjeteis.add(oneorb);
+		}
+		if(oneorb1==null&&sucubusPower>1) {
+			oneorb1 = new SucubusOrb(mapa,heroi,30,250);
+			listaProjeteis.add(oneorb1);
+		}
+		if(oneorb2==null&&sucubusPower>2) {
+			oneorb2 = new SucubusOrb(mapa,heroi,110,100);
+			listaProjeteis.add(oneorb2);
 		}
 
 		for(int i = 0; i < listaProjeteis.size();i++) {
@@ -455,12 +500,17 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 				
 				p.velX = wavedata[2];//rnd.nextInt(400)-200; 
 			    p.velY = rnd.nextInt(400)-200; 
+			    p.vel = wavedata[2];
 			    
 				p.charaX = rnd.nextInt(4)*72; 
 			    p.charaY = rnd.nextInt(2)*128; 
 			    
-			    p.vida = wavedata[1];
-			    p.vidaMaxima = wavedata[1];
+			    float promul = (progresso/10.0f)+1.0f;
+			    
+			    p.vida = 10*enemylifeemull*promul;
+			    p.vidaMaxima = 10*enemylifeemull*promul;
+			    
+			    p.damage = 10*enemydamagemull*promul;
 				
 				listaDePersonagem.add(p);
 			}
@@ -474,7 +524,8 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 	}
 
 	Color corLife = new Color(0.0f, 0.5f, 0.0f, 0.5f);
-	Color corDash = new Color(0.0f, 0.0f, 0.5f, 0.5f);
+	Color corDash = new Color(0.2f, 0.2f, 0.2f, 0.5f);
+	Color corXp = new Color(0.0f, 0.0f, 0.5f, 0.5f);
 	@Override
 	public void render(Graphics2D dbg) {
 		//Pinta O fundo de Branco
@@ -527,7 +578,7 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		
 		dbg.setTransform(trans);
 		
-		
+		//Barra de Vida
 		int szbarh = Constantes.PHEIGHT-60;
 		int fillbar = (int)((heroi.vida/(float)heroi.vidaMaxima)*szbarh);
 		dbg.setColor(corLife);
@@ -535,9 +586,11 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		dbg.setColor(Color.black);
 		dbg.drawRect(5, 30, 20, szbarh);
 		
+		
+		//Barra de DASH
 		int dashbarsz = 200;
 		int dashpart = 0;
-		if(dashtimer<5000) {
+		if(dashtimer<3000) {
 			dashpart = (int)((dashtimer/(float)5000)*dashbarsz);
 		}else {
 			dashpart = 200;
@@ -547,16 +600,35 @@ public class GameRunCanvas extends MyCanvas implements GameState {
 		dbg.setColor(Color.black);
 		dbg.drawRect(30, Constantes.PHEIGHT-230, 20, dashbarsz);
 		
+		//Barra de XP
+		int xpbarsize = Constantes.PHEIGHT-235-30;
+		int xpbarfill = (int)((heroi.xp/(float)heroi.xpLevelUp)*xpbarsize);
+		
+		dbg.setColor(corXp);
+		dbg.fillRect(30, 30+(xpbarsize-xpbarfill), 20, xpbarfill);
+		dbg.setColor(Color.black);
+		dbg.drawRect(30, 30, 20, xpbarsize);
+		
+		//Bussula
+		dbg.drawImage(Constantes.bussulaImage, Constantes.PWIDTH-50, 0, null);
+		
+		dbg.setFont(font01);
+		dbg.setColor(Color.DARK_GRAY);
+		int progresso = (int)((heroi.X/gameEndX)*100);
+		dbg.drawString("Progresso: "+progresso+"%", Constantes.PWIDTH-190, 30);
+		
+		dbg.setColor(Color.DARK_GRAY);
+		dbg.drawString("LV: "+heroi.level+"", Constantes.PWIDTH-250, 30);
+		
 		//Desenha Infos de Interface
 		dbg.setFont(font01);
 		dbg.setColor(Color.BLUE);
-		dbg.drawString("FPS: "+GamePanel.FPS+" Tipo Tiro:"+tipoDeTiro+" ---> "+(int)(timerwave/1000), 20, 20);
+		dbg.drawString("FPS: "+GamePanel.FPS, 20, 20);
 		//dbg.drawString("LEFT "+LEFT+" RIGHT "+RIGHT+" UP "+UP+" DOWN "+DOWN, 20, 50);	
 	}
 
 	@Override
 	public Map<String, GameObject> getEntities() {
-		// TODO Auto-generated method stub
 		return null;
 	}	
 

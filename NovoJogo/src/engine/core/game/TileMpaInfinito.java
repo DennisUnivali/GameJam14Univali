@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +15,8 @@ import java.util.Random;
 import com.org.json.JSONArray;
 import com.org.json.JSONException;
 import com.org.json.JSONObject;
+
+import engine.core.GamePanel;
 
 public class TileMpaInfinito extends TileMap{
 
@@ -27,8 +31,10 @@ public class TileMpaInfinito extends TileMap{
 		
 		mapBlock = new HashMap<>();
 		
-		int[][][] t1 = carregaTemplateJson("./res/engine/core/template01.json");
-		int[][][] t2 = carregaTemplateJson("./res/engine/core/template02.json");
+//		int[][][] t1 = carregaTemplateJson("./res/engine/core/template01.json");
+//		int[][][] t2 = carregaTemplateJson("./res/engine/core/template02.json");
+		int[][][] t1 = carregaTemplateJson("template01.json");
+		int[][][] t2 = carregaTemplateJson("template02.json");
 		templateList.add(t1);
 		templateList.add(t2);
 	}
@@ -151,7 +157,7 @@ public class TileMpaInfinito extends TileMap{
 		for(int i = 0; i < templates;i++) {
 			int tpid = rnd.nextInt(templateList.size());
 			copyTemplateToMamp(templateList.get(tpid), tilemap, 4+rnd.nextInt(55), 4+rnd.nextInt(55));
-		}
+		}		
 		
 		return tilemap;
 	}
@@ -192,9 +198,10 @@ public class TileMpaInfinito extends TileMap{
 	
 	public int[][][] carregaTemplateJson(String nomemapa) {
 		try {
-			FileReader fr = new FileReader(nomemapa,Charset.forName("UTF-8"));
+			InputStreamReader inr = new InputStreamReader( GamePanel.class.getResourceAsStream(nomemapa));
+			//FileReader fr = new FileReader(GamePanel.class.getResource(nomemapa),Charset.forName("UTF-8"));
 
-			BufferedReader bfr = new BufferedReader(fr);
+			BufferedReader bfr = new BufferedReader(inr);
 			String line = "";
 			String json = "";
 			while((line = bfr.readLine())!=null) {

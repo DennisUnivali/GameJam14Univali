@@ -19,9 +19,9 @@ public class CanvasSplash extends MyCanvas{
 		// TODO Auto-generated method stub
 		timer+=diftime;
 		
-		if(timer > 8000) {
-			GamePanel.telaAtiva = new GameRunCanvas();
-			//GamePanel.telaAtiva = new CanvasMainMenu();
+		if(timer > 5000) {//TODO 8000
+			//GamePanel.telaAtiva = new GameRunCanvas();
+			GamePanel.telaAtiva = new CanvasMainMenu();
 		}
 	}
 
@@ -89,11 +89,11 @@ public class CanvasSplash extends MyCanvas{
 			 dbg.drawString("GAME DESIGN BY: ", Constantes.telaW/2 - 321, 100+200);
 			 dbg.drawString("  DENNIS KERR COELHO ", Constantes.telaW/2 - 321, 100+250);
 			 dbg.drawString("PROGRAMING BY: ", Constantes.telaW/2 - 321, 100+300);
-			 dbg.drawString("  DENNIS KERR COELHO ", Constantes.telaW/2 - 321, 100+400);
-			 dbg.drawString("SOND BY: ", Constantes.telaW/2 - 321, 100+450);
-			 dbg.drawString("  DENNIS KERR COELHO ", Constantes.telaW/2 - 321, 100+500);
-			 dbg.drawString("VFX BY: ", Constantes.telaW/2 - 321, 100+550);
-			 dbg.drawString("  DENNIS KERR COELHO ", Constantes.telaW/2 - 321, 100+600);
+			 dbg.drawString("  DENNIS KERR COELHO ", Constantes.telaW/2 - 321, 100+350);
+			 dbg.drawString("SOND BY: ", Constantes.telaW/2 - 321, 100+400);
+			 dbg.drawString("  DENNIS KERR COELHO ", Constantes.telaW/2 - 321, 100+450);
+			 dbg.drawString("VFX BY: ", Constantes.telaW/2 - 321, 100+500);
+			 dbg.drawString("  DENNIS KERR COELHO ", Constantes.telaW/2 - 321, 100+550);
 			
 		}
 	}

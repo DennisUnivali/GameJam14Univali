@@ -34,33 +34,15 @@ public class CanvasHistorinha extends MyCanvas {
 
 	@Override
 	public void render(Graphics2D dbg) {
-
-		dbg.setColor(Color.black);
-		dbg.fillRect(0, 0, Constantes.telaW, Constantes.telaH);
-
-		dbg.setFont(Constantes.font.deriveFont(Font.PLAIN, 30));
-		dbg.setColor(Color.YELLOW);
-		dbg.drawString("  Janeiro 2020 ", 0, 0);
-		dbg.drawString("  Um virus surge na China e rapidamente se espalha pelo mundo ", 0, 50);
-		dbg.drawString("  A popula��o � orientada a ficar em casa para evitar o contagio ", 0, 100);
-		dbg.drawString("  Depois de 90 dias em casa alguns acontecimentos estranhos acontecem. ", 0, 150);
-		dbg.drawString("  O sinal de tv e a internet come�am a falhar ", 0, 200);
-		dbg.drawString("  As pessoas s�o orientadas a n�o sair de casa nem para comprar alimentos ", 0, 250);
-		dbg.drawString("  30 dias depois a TV e a internet falha de Vez ", 0, 300);
-		dbg.drawString("  Ja se passaram 150 dias do inicio da quarentena, a comida esta acabando. ", 0, 350);
-		dbg.drawString("  A energia come�a a falhar. ", 0, 400);
-		dbg.drawString("  A comida acaba... ", 0, 450);
-		dbg.drawString("  Voc� decide sair de casa para comprar comida ", 0, 500);
-		dbg.drawString("  S�o 12:00 e voc� olha para o ceu, ele esta escuro. ", 0, 550);
-		dbg.drawString("  O sol est� coberto por grossas nuvens de cinzas. ", 0, 600);
-		dbg.drawString("  Tudo est� muito diferente. ", 0, 650);
-		dbg.drawString("  .... ", 0, 700);
 		
+		dbg.drawImage(engine.core.game.Constantes.historinhaImage,0,0, null);
+
+
 		firstdraw = false;
 		
 		if(theGame!=null) {
-			dbg.setColor(Color.RED);
-			dbg.drawString("  Clique Na Tela Para Continuar ", 250, 700);
+			dbg.setColor(Color.white);
+			dbg.drawString("  Clique Na Tela Para Continuar ou pressione espaço ou enter ", 250, 700);
 		}
 
 	}
@@ -68,12 +50,19 @@ public class CanvasHistorinha extends MyCanvas {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
+		int keyCode = e.getKeyCode();
 
+		if(keyCode == KeyEvent.VK_SPACE || keyCode == KeyEvent.VK_ENTER){
+			if(theGame!=null) {
+				GamePanel.telaAtiva = theGame;
+			}
+		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
+
 
 	}
 

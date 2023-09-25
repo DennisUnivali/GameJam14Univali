@@ -1,5 +1,6 @@
 package engine.core;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -24,26 +25,54 @@ public class CanvasMainMenu extends MyCanvas {
 		//	GamePanel.telaAtiva = new CanvasGame();
 		//}
 	}
+	String arrayOpcoes[] = {"  Novo Jogo ","  Teclas ","  Sobre "};
+	int selected = 0;
 
 	@Override
 	public void render(Graphics2D dbg) {
 
-		dbg.setColor(Color.black);
-		dbg.fillRect(0, 0, Constantes.telaW, Constantes.telaH);
+		//dbg.setColor(Color.black);
+		//dbg.fillRect(0, 0, Constantes.telaW, Constantes.telaH);
 
+		dbg.drawImage(engine.core.game.Constantes.aberturaImage,0,0, null);
+		
 		dbg.setFont(Constantes.font.deriveFont(Font.PLAIN, 50));
-		dbg.setColor(Color.WHITE);
-		dbg.drawString("  NEW GAME ", Constantes.telaW / 2 - 321, Constantes.telaH / 2 + 50);
-		dbg.setColor(Color.LIGHT_GRAY);
-		dbg.drawString("  LOAD GAME ", Constantes.telaW / 2 - 321, Constantes.telaH / 2 + 100);
-		dbg.drawString("  OP��ES ", Constantes.telaW / 2 - 321, Constantes.telaH / 2 + 150);
-
+		
+		for(int i = 0; i < arrayOpcoes.length;i++) {
+			if(selected==i) {
+				dbg.setColor(Color.WHITE);
+			}else {
+				dbg.setColor(Color.LIGHT_GRAY);
+			}
+			dbg.drawString(arrayOpcoes[i], Constantes.telaW / 2 - 421, Constantes.telaH / 2 + 50+50*i);
+		}
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-
+		int keyCode = e.getKeyCode();
+		if(keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W){
+			selected--;
+		}
+		if(keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S){
+			selected++;
+		}
+		if (selected>=arrayOpcoes.length) {
+			selected=0;
+		}
+		if(selected<0) {
+			selected=arrayOpcoes.length-1;
+		}
+		
+		if(keyCode == KeyEvent.VK_SPACE || keyCode == KeyEvent.VK_ENTER){
+			if(selected==0) {
+				GamePanel.telaAtiva = new  CanvasHistorinha();
+			}
+			if(selected==1) {
+				GamePanel.telaAtiva = new  CanvasTeclas();
+			}
+		}
+		
 	}
 
 	@Override
@@ -73,7 +102,12 @@ public class CanvasMainMenu extends MyCanvas {
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		GamePanel.telaAtiva = new  CanvasHistorinha();//new CanvasGame();
+		if(selected==0) {
+			GamePanel.telaAtiva = new  CanvasHistorinha();
+		}
+		if(selected==1) {
+			GamePanel.telaAtiva = new  CanvasTeclas();
+		}
 	}
 
 	@Override
